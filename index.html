@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bike Sathi - Fixed Audio Dashboard</title>
+    <title>Bike Sathi - M4A Audio Dashboard</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background-color: #121212; color: #ffffff; padding: 20px; }
         .container { max-width: 450px; margin: 30px auto; background: #1e1e1e; padding: 30px; border-radius: 15px; border: 1px solid #333; }
@@ -18,30 +18,30 @@
 <body>
 
 <div class="container">
-    <h2>🏍️ BIKE SATHI (FIXED)</h2>
-    <p style="color: #aaa;">Audio Extension: .wav Detected</p>
+    <h2>🏍️ BIKE SATHI Dashboard</h2>
+    <p style="color: #aaa;">Audio Format: .m4a Loaded</p>
     
     <button class="activate-btn" id="mainBtn" onclick="activateAudio()">1. CLICK TO ACTIVATE AUDIO</button>
     
     <div class="status" id="statusText">Awaiting Activation...</div>
     
     <div class="test-grid">
-        <button class="test-btn" onclick="playSound(0)">🔊 Play Sound 1</button>
-        <button class="test-btn" onclick="playSound(1)">🔊 Play Sound 2</button>
-        <button class="test-btn" onclick="playSound(2)">🔊 Play Sound 3</button>
-        <button class="test-btn" onclick="playSound(3)">🔊 Play Sound 4</button>
+        <button class="test-btn" onclick="playSound(0)">🔊 Play final.m4a</button>
+        <button class="test-btn" onclick="playSound(1)">🔊 Play 1.m4a</button>
+        <button class="test-btn" onclick="playSound(2)">🔊 Play 2.m4a</button>
+        <button class="test-btn" onclick="playSound(3)">🔊 Play 3.m4a</button>
     </div>
     
-    <div class="log-box" id="logBox">System ready. Update code and try again.<br></div>
+    <div class="log-box" id="logBox">System ready. Waiting for user...<br></div>
 </div>
 
 <script>
-// AAPKI REPOSITORY KI EXACT .WAV FILES KE RAW LINKS
+// AAPKI REPOSITORY KI EXACT .M4A FILES KE RAW LINKS
 const sounds = [
-    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/1.wav",
-    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/2.wav",
-    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/3.wav",
-    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/4.wav"
+    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/final.m4a",
+    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/1.m4a",
+    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/2.m4a",
+    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/3.m4a"
 ];
 
 let audioActivated = false;
@@ -61,7 +61,7 @@ function activateAudio() {
     document.getElementById('mainBtn').style.color = "#aaa";
     addLog("Mobile Browser restrictions unlocked.");
     
-    // Test hit
+    // Pehla sound automatic test karega click hote hi
     playSound(0);
 }
 
@@ -71,19 +71,18 @@ function playSound(index) {
         return;
     }
     
-    addLog(`Loading Audio ${index + 1}...`);
+    addLog(`Loading Audio File...`);
     
-    // Mobile browsers ke liye standard audio object aur preload forced
     let audio = new Audio();
     audio.src = sounds[index];
     audio.preload = "auto";
     
     audio.play()
         .then(() => {
-            addLog(`Playing: Sound ${index + 1} started!`);
+            addLog(`Success: Sound ${index + 1} playing!`);
         })
         .catch(err => {
-            addLog(`❌ Playback Failed: ${err.message}`);
+            addLog(`❌ Error: ${err.message}`);
             console.error(err);
         });
 }
