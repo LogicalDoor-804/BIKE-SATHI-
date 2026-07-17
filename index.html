@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bike Sathi - M4A Audio Dashboard</title>
+    <title>Bike Sathi - Audio Fixed</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background-color: #121212; color: #ffffff; padding: 20px; }
         .container { max-width: 450px; margin: 30px auto; background: #1e1e1e; padding: 30px; border-radius: 15px; border: 1px solid #333; }
@@ -12,14 +12,14 @@
         .status { margin-top: 20px; font-weight: bold; color: #ffcc00; padding: 10px; border-radius: 5px; background: rgba(255, 204, 0, 0.1); }
         .test-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
         .test-btn { background: #2c2c2c; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 14px; }
-        .log-box { background: #000; color: #00ff88; padding: 12px; text-align: left; height: 120px; overflow-y: auto; border-radius: 8px; font-family: monospace; font-size: 11px; margin-top: 25px; }
+        .log-box { background: #000; color: #00ff88; padding: 12px; text-align: left; height: 160px; overflow-y: auto; border-radius: 8px; font-family: monospace; font-size: 11px; margin-top: 25px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>🏍️ BIKE SATHI Dashboard</h2>
-    <p style="color: #aaa;">Audio Format: .m4a Loaded</p>
+    <p style="color: #aaa;">Debugging Audio Path Mode</p>
     
     <button class="activate-btn" id="mainBtn" onclick="activateAudio()">1. CLICK TO ACTIVATE AUDIO</button>
     
@@ -32,16 +32,19 @@
         <button class="test-btn" onclick="playSound(3)">🔊 Play 3.m4a</button>
     </div>
     
-    <div class="log-box" id="logBox">System ready. Waiting for user...<br></div>
+    <div class="log-box" id="logBox">Logs ready...<br></div>
 </div>
 
 <script>
-// AAPKI REPOSITORY KI EXACT .M4A FILES KE RAW LINKS
-const sounds = [
-    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/final.m4a",
-    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/1.m4a",
-    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/2.m4a",
-    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/3.m4a"
+// Base URL jahan aapki files hain
+const baseUrl = "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/";
+
+// Audio files ki list (Case-sensitive debugging ke liye alag format)
+const fileNames = [
+    "final.m4a",
+    "1.m4a",
+    "2.m4a",
+    "3.m4a"
 ];
 
 let audioActivated = false;
@@ -59,10 +62,7 @@ function activateAudio() {
     document.getElementById('statusText').style.background = "rgba(0, 255, 136, 0.1)";
     document.getElementById('mainBtn').style.background = "#333";
     document.getElementById('mainBtn').style.color = "#aaa";
-    addLog("Mobile Browser restrictions unlocked.");
-    
-    // Pehla sound automatic test karega click hote hi
-    playSound(0);
+    addLog("Audio system unlocked. Ready to test files.");
 }
 
 function playSound(index) {
@@ -71,19 +71,31 @@ function playSound(index) {
         return;
     }
     
-    addLog(`Loading Audio File...`);
+    let targetFile = fileNames[index];
+    let fullUrl = baseUrl + targetFile;
+    
+    addLog(`Trying to load: ${targetFile}`);
     
     let audio = new Audio();
-    audio.src = sounds[index];
+    audio.src = fullUrl;
     audio.preload = "auto";
     
     audio.play()
         .then(() => {
-            addLog(`Success: Sound ${index + 1} playing!`);
+            addLog(`✅ Success! Playing: ${targetFile}`);
         })
         .catch(err => {
-            addLog(`❌ Error: ${err.message}`);
-            console.error(err);
+            addLog(`❌ Failed for ${targetFile}. Error: ${err.message}`);
+            
+            // Debugging Trick: Agar file lower case me fail hui, toh capital try karte hain inline
+            if(targetFile.includes('.m4a')) {
+                let altFile = targetFile.replace('.m4a', '.M4A');
+                addLog(`🔄 Retrying with Capital Extension: ${altFile}...`);
+                let altAudio = new Audio(baseUrl + altFile);
+                altAudio.play()
+                    .then(() => addLog(`✅ Success with Capital Extension!`))
+                    .catch(e => addLog(`❌ Capital format also failed.`));
+            }
         });
 }
 </script>
