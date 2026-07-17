@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bike Sathi - Audio Fixed</title>
+    <title>Bike Sathi - Voices Folder Fixed</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background-color: #121212; color: #ffffff; padding: 20px; }
         .container { max-width: 450px; margin: 30px auto; background: #1e1e1e; padding: 30px; border-radius: 15px; border: 1px solid #333; }
@@ -12,14 +12,14 @@
         .status { margin-top: 20px; font-weight: bold; color: #ffcc00; padding: 10px; border-radius: 5px; background: rgba(255, 204, 0, 0.1); }
         .test-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
         .test-btn { background: #2c2c2c; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 14px; }
-        .log-box { background: #000; color: #00ff88; padding: 12px; text-align: left; height: 160px; overflow-y: auto; border-radius: 8px; font-family: monospace; font-size: 11px; margin-top: 25px; }
+        .log-box { background: #000; color: #00ff88; padding: 12px; text-align: left; height: 140px; overflow-y: auto; border-radius: 8px; font-family: monospace; font-size: 11px; margin-top: 25px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>🏍️ BIKE SATHI Dashboard</h2>
-    <p style="color: #aaa;">Debugging Audio Path Mode</p>
+    <p style="color: #aaa;">Path: voices/ folder linked successfully</p>
     
     <button class="activate-btn" id="mainBtn" onclick="activateAudio()">1. CLICK TO ACTIVATE AUDIO</button>
     
@@ -36,10 +36,9 @@
 </div>
 
 <script>
-// Base URL jahan aapki files hain
-const baseUrl = "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/";
+// VOICES FOLDER KA FIXED RAW PATH
+const baseUrl = "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/voices/";
 
-// Audio files ki list (Case-sensitive debugging ke liye alag format)
 const fileNames = [
     "final.m4a",
     "1.m4a",
@@ -62,7 +61,7 @@ function activateAudio() {
     document.getElementById('statusText').style.background = "rgba(0, 255, 136, 0.1)";
     document.getElementById('mainBtn').style.background = "#333";
     document.getElementById('mainBtn').style.color = "#aaa";
-    addLog("Audio system unlocked. Ready to test files.");
+    addLog("Audio system unlocked. Ready to stream from voices/ folder.");
 }
 
 function playSound(index) {
@@ -74,7 +73,7 @@ function playSound(index) {
     let targetFile = fileNames[index];
     let fullUrl = baseUrl + targetFile;
     
-    addLog(`Trying to load: ${targetFile}`);
+    addLog(`Loading: voices/${targetFile}...`);
     
     let audio = new Audio();
     audio.src = fullUrl;
@@ -82,19 +81,19 @@ function playSound(index) {
     
     audio.play()
         .then(() => {
-            addLog(`✅ Success! Playing: ${targetFile}`);
+            addLog(`✅ Success! Playing: voices/${targetFile}`);
         })
         .catch(err => {
-            addLog(`❌ Failed for ${targetFile}. Error: ${err.message}`);
+            addLog(`❌ Failed for voices/${targetFile}: ${err.message}`);
             
-            // Debugging Trick: Agar file lower case me fail hui, toh capital try karte hain inline
+            // Case sensitivity check (Agar file extension capital .M4A ho)
             if(targetFile.includes('.m4a')) {
                 let altFile = targetFile.replace('.m4a', '.M4A');
-                addLog(`🔄 Retrying with Capital Extension: ${altFile}...`);
+                addLog(`🔄 Retrying with uppercase extension: voices/${altFile}...`);
                 let altAudio = new Audio(baseUrl + altFile);
                 altAudio.play()
-                    .then(() => addLog(`✅ Success with Capital Extension!`))
-                    .catch(e => addLog(`❌ Capital format also failed.`));
+                    .then(() => addLog(`✅ Success with uppercase extension!`))
+                    .catch(e => addLog(`❌ Uppercase extension also failed.`));
             }
         });
 }
