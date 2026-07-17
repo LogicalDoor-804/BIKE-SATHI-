@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bike Sathi - Audio Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; background-color: #121212; color: #ffffff; padding: 20px; margin: 0; }
+        .container { max-width: 500px; margin: 30px auto; background: #1e1e1e; padding: 30px; border-radius: 15px; box-shadow: 0px 5px 20px rgba(0,0,0,0.5); border: 1px solid #333; }
+        h2 { color: #00ff88; margin-bottom: 5px; }
+        .subtitle { color: #aaa; font-size: 14px; margin-bottom: 25px; }
+        .activate-btn { background-color: #00ff88; color: #121212; border: none; padding: 15px 30px; font-size: 16px; font-weight: bold; border-radius: 30px; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3); transition: 0.2s; }
+        .activate-btn:active { transform: scale(0.98); }
+        .status { margin-top: 20px; font-weight: bold; font-size: 16px; color: #ffcc00; padding: 10px; border-radius: 5px; background: rgba(255, 204, 0, 0.1); }
+        .test-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
+        .test-btn { background: #2c2c2c; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .test-btn:hover { background: #3d3d3d; }
+        .log-box { background: #000; color: #00ff88; padding: 12px; text-align: left; height: 140px; overflow-y: auto; border-radius: 8px; font-family: monospace; font-size: 12px; margin-top: 25px; border: 1px solid #222; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🏍️ BIKE SATHI</h2>
+    <div class="subtitle">IoT Audio Testing Dashboard</div>
+    
+    <!-- Step 1: Mobile browser me audio permission unlock karne ke liye button -->
+    <button class="activate-btn" id="mainBtn" onclick="activateAudio()">1. CLICK TO START SYSTEM</button>
+    
+    <div class="status" id="statusText">Awaiting User Activation...</div>
+    
+    <!-- Step 2: Manual testing section (Bina NodeMCU ke check karne ke liye) -->
+    <div class="test-grid">
+        <button class="test-btn" onclick="playSound(0)">🎵 Test Sound 1</button>
+        <button class="test-btn" onclick="playSound(1)">🎵 Test Sound 2</button>
+        <button class="test-btn" onclick="playSound(2)">🎵 Test Sound 3</button>
+        <button class="test-btn" onclick="playSound(3)">🎵 Test Sound 4</button>
+    </div>
+    
+    <div class="log-box" id="logBox">System initialized. Ready for test...<br></div>
+</div>
+
+<script>
+// Aapki repository ke FIX RAW Links (.mp3 format ke liye)
+const sounds = [
+    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/1.mp3",
+    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/2.mp3",
+    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/3.mp3",
+    "https://raw.githubusercontent.com/LogicalDoor-804/BIKE-SATHI-/main/4.mp3"
+];
+
+let audioContextActivated = false;
+
+function addLog(message) {
+    const logBox = document.getElementById('logBox');
+    logBox.innerHTML += `[${new Date().toLocaleTimeString()}] ${message}<br>`;
+    logBox.scrollTop = logBox.scrollHeight;
+}
+
+// Mobile Chrome/Safari ke liye audio context active karna
+function activateAudio() {
+    audioContextActivated = true;
+    
+    const statusText = document.getElementById('statusText');
+    statusText.innerText = "🟢 SYSTEM ACTIVE & LISTENING";
+    statusText.style.color = "#00ff88";
+    statusText.style.background = "rgba(0, 255, 136, 0.1)";
+    
+    document.getElementById('mainBtn').innerText = "SYSTEM RUNNING";
+    document.getElementById('mainBtn').style.backgroundColor = "#333";
+    document.getElementById('mainBtn').style.color = "#aaa";
+    document.getElementById('mainBtn').disabled = true;
+    
+    addLog("Audio Engine Started. Mobile permissions unlocked.");
+    
+    // Check karne ke liye sound 1 halka sa background me load/play hoga
+    let testAudio = new Audio(sounds[0]);
+    testAudio.volume = 0.2;
+    testAudio.play().then(() => {
+        addLog("Test success: Sound 1 played perfectly!");
+    }).catch(err => {
+        addLog("Autoplay Note: " + err.message);
+    });
+}
+
+// Sound Play karne ka Core Function
+function playSound(index) {
+    if (!audioContextActivated) {
+        addLog("⚠️ Warning: Please click the main green button first!");
+        alert("Pehle 'CLICK TO START SYSTEM' button par click karein!");
+        return;
+    }
+    
+    if (index >= 0 && index < sounds.length) {
+        addLog(`Triggered: Playing Audio File ${index + 1}...`);
+        let audio = new Audio(sounds[index]);
+        audio.play().catch(err => {
+            addLog("❌ Audio Playback Error: " + err.message);
+        });
+    } else {
+        addLog("❌ Error: Invalid Sound Index.");
+    }
+}
+
+// NodeMCU ke local incoming signal ke liye global hook
+window.triggerSoundFromNode = function(soundIndex) {
+    playSound(soundIndex);
+};
+</script>
+
+</body>
+</html>
